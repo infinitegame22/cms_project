@@ -7,6 +7,6 @@ gem "rack-test"
 gem "erubis"
 gem "webrick"
 gem "rerun"
-gem "rtecarpet"
+gem "redcarpet"
 
 ruby "3.2.2"
