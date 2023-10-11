@@ -3,6 +3,7 @@ require "sinatra/reloader"
 require "tilt/erubis"
 require "sinatra/content_for"
 require "redcarpet"
+require "pry"
 
 configure do
   use Rack::Session::Cookie, :key=>"rack.session", :path=>"/" 
@@ -46,11 +47,20 @@ get "/:filename" do
   end
 end
 
-get "/edit/:filename" do
+get "/:filename/edit" do
+  file_path = root + "/data/" + params[:filename]
+
+  @filename = params[:filename]
+  @content = File.read(file_path)
+
   erb :edit_file
 end
 
-post "/save/:filename" do
+post "/:filename" do
+  file_path = root + "/data/" + params[:filename]
 
+  File.write(file_path, params[:content])
+
+  session[:message] = "#{params[:filename]} has been updated."
   redirect "/"
 end
