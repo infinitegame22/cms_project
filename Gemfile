@@ -8,5 +8,6 @@ gem "erubis"
 gem "webrick"
 gem "rerun"
 gem "redcarpet"
+gem "pry"
 
 ruby "3.2.2"
