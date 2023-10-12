@@ -7,7 +7,7 @@ require "pry"
 
 configure do
   enable :sessions
-  set :session_secret, SecureRandom.hex(32)
+  set :session_secret, 'secret'
   # set :erb, :escape_html => true
 end
 
@@ -93,4 +93,13 @@ post "/create" do
 
     redirect "/"
   end
+end
+
+post "/:filename/delete" do
+  file_path = File.join(data_path, params[:filename])
+
+  File.delete(file_path)
+
+  session[:message] = "#{params[:filename]} has been deleted."
+  redirect "/"
 end
