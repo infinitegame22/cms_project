@@ -17,5 +17,3 @@
 2020 - Ruby 3.0 released.
 2021 - Ruby 3.1 released.
 2022 - Ruby 3.2 released.
-
-YES!!

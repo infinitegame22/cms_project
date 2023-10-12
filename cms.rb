@@ -45,6 +45,10 @@ get "/" do
   erb :index
 end
 
+get "/new" do
+  erb :new_doc
+end
+
 get "/:filename" do
   file_path = File.join(data_path, params[:filename])
 
@@ -72,4 +76,21 @@ post "/:filename" do
 
   session[:message] = "#{params[:filename]} has been updated."
   redirect "/"
+end
+
+post "/create" do
+  filename = [:filename].to_s
+
+  if filename.size == 0
+    session[:message] = "A name is required."
+    status 422
+    erb :new_doc
+  else
+    file_path = File.join(data_path, filename)
+
+    File.write(file_path, "")
+    session[:message] = "#{params[:filename]} has been created."
+
+    redirect "/"
+  end
 end
