@@ -6,9 +6,9 @@ require "redcarpet"
 require "pry"
 
 configure do
-  use Rack::Session::Cookie, :key=>"rack.session", :path=>"/" 
+  enable :sessions
   set :session_secret, SecureRandom.hex(32)
-  set :erb, :escape_html => true
+  # set :erb, :escape_html => true
 end
 
 def render_markdown(text)
@@ -35,17 +35,18 @@ def data_path
   end
 end
 
-root = File.expand_path("..", __FILE__)
+# root = File.expand_path("..", __FILE__)
 
 get "/" do
-  @files = Dir.glob(root + "/data/*").map do |path|
+  pattern = File.join(data_path, "*")
+  @files = Dir.glob(pattern).map do |path|
     File.basename(path)
   end
   erb :index
 end
 
 get "/:filename" do
-  file_path = root + "/data/" + params[:filename]
+  file_path = File.join(data_path, params[:filename])
 
   if File.file?(file_path)
     load_file_content(file_path)
@@ -56,7 +57,7 @@ get "/:filename" do
 end
 
 get "/:filename/edit" do
-  file_path = root + "/data/" + params[:filename]
+  file_path = File.join(data_path, params[:filename])
 
   @filename = params[:filename]
   @content = File.read(file_path)
@@ -65,7 +66,7 @@ get "/:filename/edit" do
 end
 
 post "/:filename" do
-  file_path = root + "/data/" + params[:filename]
+  file_path = File.join(data_path, params[:filename])
 
   File.write(file_path, params[:content])
 
