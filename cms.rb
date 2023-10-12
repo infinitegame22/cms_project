@@ -5,9 +5,10 @@ require "sinatra/content_for"
 require "redcarpet"
 require "pry"
 
+SESSION_SECRET = 'df3dssjk44hui45837y3rhui890s99g23'.freeze
 configure do
   enable :sessions
-  set :session_secret, 'secret'
+  set :session_secret, SESSION_SECRET
   # set :erb, :escape_html => true
 end
 
