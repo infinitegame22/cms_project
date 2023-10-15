@@ -5,10 +5,10 @@ require "sinatra/content_for"
 require "redcarpet"
 require "pry"
 
-SESSION_SECRET = 'df3dssjk44hui45837y3rhui890s99g23'.freeze
 configure do
   enable :sessions
-  set :session_secret, SESSION_SECRET
+  use Rack::Session::Cookie, :key=>"rack.session", :path=>"/" 
+  set :session_secret, SecureRandom.hex(32)
   # set :erb, :escape_html => true
 end
 
@@ -103,4 +103,8 @@ post "/:filename/delete" do
 
   session[:message] = "#{params[:filename]} has been deleted."
   redirect "/"
+end
+
+get "/signin"
+  erb :sign_in
 end
