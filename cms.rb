@@ -43,7 +43,12 @@ get "/" do
   @files = Dir.glob(pattern).map do |path|
     File.basename(path)
   end
-  erb :index
+
+  if session[:user]
+    erb :index
+  else
+    redirect "/users/signin"
+  end
 end
 
 get "/new" do
@@ -105,6 +110,24 @@ post "/:filename/delete" do
   redirect "/"
 end
 
-get "/signin"
+get "/users/signin" do
   erb :sign_in
+end
+
+post "/users/signin" do
+  if params[:username] == "admin" && params[:password] == "secret"
+    session[:username] = params[:username]
+    session[:message] = "Welcome!"
+    redirect "/"
+  else
+    session[:message] = "Invalid credentials"
+    status 422
+    erb :signin
+  end
+end
+
+post "/users/signout" do
+  session.delete(:username)
+  session[:message] = "You have been signed out."
+  redirect "/"
 end
