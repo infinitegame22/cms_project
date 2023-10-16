@@ -51,42 +51,12 @@ get "/new" do
   erb :new_doc
 end
 
-get "/:filename" do
-  file_path = File.join(data_path, params[:filename])
-
-  if File.file?(file_path)
-    load_file_content(file_path)
-  else
-    session[:message] = "#{params[:filename]} does not exist"
-    redirect "/"
-  end
-end
-
-get "/:filename/edit" do
-  file_path = File.join(data_path, params[:filename])
-
-  @filename = params[:filename]
-  @content = File.read(file_path)
-
-  erb :edit_file
-end
-
-post "/:filename" do
-  file_path = File.join(data_path, params[:filename])
-
-  File.write(file_path, params[:content])
-
-  session[:message] = "#{params[:filename]} has been updated."
-  redirect "/"
-end
-
 post "/create" do
-  filename = [:filename].to_s
+  filename = params[:filename].to_s
 
   if filename.size == 0
     session[:message] = "A name is required."
     status 422
-    binding.pry
     erb :new_doc
   else
     file_path = File.join(data_path, filename)
@@ -98,6 +68,15 @@ post "/create" do
   end
 end
 
+post "/:filename" do
+  file_path = File.join(data_path, params[:filename])
+
+  File.write(file_path, params[:content])
+
+  session[:message] = "#{params[:filename]} has been updated."
+  redirect "/"
+end
+
 post "/:filename/delete" do
   file_path = File.join(data_path, params[:filename])
 
@@ -105,6 +84,15 @@ post "/:filename/delete" do
 
   session[:message] = "#{params[:filename]} has been deleted"
   redirect "/"
+end
+
+get "/:filename/edit" do
+  file_path = File.join(data_path, params[:filename])
+
+  @filename = params[:filename]
+  @content = File.read(file_path)
+
+  erb :edit_file
 end
 
 get "/users/signin" do
