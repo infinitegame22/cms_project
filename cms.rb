@@ -44,11 +44,7 @@ get "/" do
     File.basename(path)
   end
 
-  if session[:user]
-    erb :index
-  else
-    redirect "/users/signin"
-  end
+  erb :index
 end
 
 get "/new" do
@@ -111,7 +107,7 @@ post "/:filename/delete" do
 end
 
 get "/users/signin" do
-  erb :sign_in
+  erb :signin
 end
 
 post "/users/signin" do
