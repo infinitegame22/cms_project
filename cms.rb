@@ -17,6 +17,10 @@ def render_markdown(text)
   markdown.render(text)
 end
 
+def session
+  last_request.env["rack.session"]
+end
+
 def load_file_content(path)
   content = File.read(path)
   case File.extname(path)

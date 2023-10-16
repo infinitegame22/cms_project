@@ -173,3 +173,8 @@ def test_signout
   assert_includes last_response.body, "You have been signed out"
   assert_includes last_response.body, "Sign In"
 end
+
+def test_sets_session_value
+  get "/path_that_sets_session_value"
+  assert_equal "expected value", session[:key]
+end
