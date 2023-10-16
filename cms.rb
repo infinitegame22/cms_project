@@ -17,10 +17,6 @@ def render_markdown(text)
   markdown.render(text)
 end
 
-def session
-  last_request.env["rack.session"]
-end
-
 def load_file_content(path)
   content = File.read(path)
   case File.extname(path)
@@ -61,7 +57,7 @@ get "/:filename" do
   if File.file?(file_path)
     load_file_content(file_path)
   else
-    session[:message] = "#{params[:filename]} does not exist."
+    session[:message] = "#{params[:filename]} does not exist"
     redirect "/"
   end
 end
@@ -90,6 +86,7 @@ post "/create" do
   if filename.size == 0
     session[:message] = "A name is required."
     status 422
+    binding.pry
     erb :new_doc
   else
     file_path = File.join(data_path, filename)
@@ -106,7 +103,7 @@ post "/:filename/delete" do
 
   File.delete(file_path)
 
-  session[:message] = "#{params[:filename]} has been deleted."
+  session[:message] = "#{params[:filename]} has been deleted"
   redirect "/"
 end
 
