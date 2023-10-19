@@ -4,6 +4,7 @@ require "tilt/erubis"
 require "sinatra/content_for"
 require "redcarpet"
 require "pry"
+require "yaml"
 
 configure do
   enable :sessions
@@ -36,6 +37,26 @@ def data_path
   end
 end
 
+def user_signed_in?
+  session.key?(:username)
+end
+
+def require_signed_in_user
+  unless user_signed_in?
+    session[:message] = "You must be signed in to do that."
+    redirect "/"
+  end
+end
+
+def load_user_credentials
+  credentials_path = if ENV["RACK_ENV"] == "test"
+    File.expand_path("../test/users.yml", __FILE__)
+  else
+    File.expand_path("../users.yml", __FILE__)
+  end
+  YAML.load_file(credentials_path)
+end
+
 # root = File.expand_path("..", __FILE__)
 
 get "/" do
@@ -48,6 +69,8 @@ get "/" do
 end
 
 get "/new" do
+  require_signed_in_user
+
   erb :new_doc
 end
 
@@ -78,6 +101,8 @@ post "/:filename" do
 end
 
 post "/:filename/delete" do
+  require_signed_in_user
+
   file_path = File.join(data_path, params[:filename])
 
   File.delete(file_path)
@@ -87,6 +112,8 @@ post "/:filename/delete" do
 end
 
 get "/:filename/edit" do
+  require_signed_in_user
+
   file_path = File.join(data_path, params[:filename])
 
   @filename = params[:filename]
@@ -115,4 +142,19 @@ post "/users/signout" do
   session.delete(:username)
   session[:message] = "You have been signed out."
   redirect "/"
+end
+
+post "/users/signin" do
+  credentials = load_user_credentials
+  username = params[:username]
+
+  if credentials.key?(username) && credentials[username] == params[:password]
+    session[:username] = username
+    session[:message] = "Welcome!"
+    redirect "/"
+  else
+    session[:message] = "Invalid credentials"
+    status 422
+    erb :signin
+  end
 end
