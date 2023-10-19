@@ -62,7 +62,7 @@ post "/create" do
     file_path = File.join(data_path, filename)
 
     File.write(file_path, "")
-    session[:message] = "#{params[:filename]} has been created."
+    session[:message] = "#{params[:filename]} has been created"
 
     redirect "/"
   end

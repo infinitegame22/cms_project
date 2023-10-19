@@ -32,6 +32,10 @@ class CMSTest < Minitest::Test
     last_request.env["rack.session"]
   end
 
+  def admin_session
+    { "rack.session" => {username: "admin"}}
+  end
+
   def test_index
     create_document "about.md"
     create_document "changes.txt"
@@ -74,7 +78,7 @@ class CMSTest < Minitest::Test
   def test_editing_document
     create_document "changes.txt"
 
-    get "/changes.txt/edit"
+    get "/changes.txt/edit", {}, admin_session
 
     assert_equal 200, last_response.status
     assert_includes last_response.body, "<textarea"
@@ -85,10 +89,7 @@ class CMSTest < Minitest::Test
     post "/changes.txt", content: "new content"
 
     assert_equal 302, last_response.status
-
-    get last_response["Location"]
-
-    assert_includes last_response.body, "changes.txt has been updated"
+    assert_equal "changes.txt has been updated", session[:message]
 
     get "/changes.txt"
     assert_equal 200, last_response.status
