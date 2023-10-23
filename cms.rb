@@ -127,6 +127,9 @@ get "/users/signin" do
 end
 
 post "/users/signin" do
+  credentials = load_user_credentials
+  username = params[:username]
+  
   if params[:username] == "admin" && params[:password] == "secret"
     session[:username] = params[:username]
     session[:message] = "Welcome!"
