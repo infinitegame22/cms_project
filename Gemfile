@@ -9,5 +9,6 @@ gem "webrick"
 gem "rerun"
 gem "redcarpet"
 gem "pry"
+gem "bcrypt"
 
 ruby "3.2.2"
